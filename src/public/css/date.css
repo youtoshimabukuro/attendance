@@ -1,0 +1,140 @@
+html,
+body {
+        width: 100%;
+        height: 100%;
+}
+
+.wrapper {
+        aspect-ratio: 1440/900;
+}
+
+.header {
+        width: 100%;
+        height: 10%;
+}
+
+
+.header_inner {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 2.2%;
+        box-sizing: border-box;
+}
+
+.header-logo {
+        width: 13%;
+        height: 100%;
+}
+
+.header-logo h1 {
+        width: 100%;
+        height: 100%;
+        font-size: 2.3vw;
+        margin-left: 5%;
+}
+
+.header-nav {
+        width: 27%;
+        height: 100%;
+}
+
+.header-nav-list {
+        display: flex;
+        margin-top: 2%;
+        justify-content: space-between;
+}
+
+.header-nav-list li {
+        font-size: 1.3vw;
+        margin-right: 2%;
+        display: flex;
+        align-items: center;
+}
+
+.header-nav-btn {
+        font-size: 1.3vw;
+        border: none;
+        line-height: 0%;
+}
+
+.header-nav-item a {
+        color: black;
+}
+
+.main {
+        width: 100%;
+        height: 83%;
+        display: flex;
+        background-color: aliceblue;
+}
+
+.register_inner {
+        width: 87%;
+        height: 100%;
+        margin: 0 auto;
+}
+
+.register_inner h1 {
+        font-size: 1.7vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 20%;
+}
+
+.table_box {
+        width: 100%;
+        height: 62%;
+}
+
+table {
+        width: 100%;
+}
+
+.date_table th,
+.date_table td {
+        font-size: 1.2vw;
+        padding: 2%;
+        border-top: 0.1vw solid rgb(212, 212, 212);
+        border-bottom: 0.1vw solid rgb(212, 212, 212);
+}
+
+.register_inner p {
+        padding-top: 3%;
+        font-size: 1.2vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 30%;
+}
+
+.blue-text {
+        font-size: 1.2vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.register_inner a {
+        color: blue;
+}
+
+.footer {
+        height: 7%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.footer p {
+        font-size: 1.2vw;
+        font-weight: 600;
+}
+
+svg.w-2.h-5 {
+        /*paginateメソッドの矢印の大きさ調整のために追加*/
+        font-size: 1.2vw;
+        font-weight: 600;
+}
