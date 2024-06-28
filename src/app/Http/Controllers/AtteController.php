@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Time;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use PHPUnit\Framework\MockObject\Stub\ReturnStub;
 
@@ -24,14 +26,15 @@ class AtteController extends Controller
 
     public function timeIn(Request $request)
     {
+        $user = $request->user();
         $times = Carbon::now();
         $time = $times->format('H:i');
         $date = $times->format('Y-m-d');
-        $item = Time::where('user_id', $request->user_id)->where('date', $date)->first();
+        $item = Time::where('user_id', $user['id'])->where('date', $date)->first();
         //dd($item);
-        if ($item==null){
+        if ($item == null) {
             $form = [
-                'user_id' => $request->user_id,
+                'user_id' => $user['id'],
                 'date' => $date,
                 'name' => $request->name,
                 'attendance' => $time,
@@ -47,7 +50,7 @@ class AtteController extends Controller
                 //dd($item['id']);
             } else {
                 $form = [
-                    'user_id' => $request->user_id,
+                    'user_id' => $user['id'],
                     'date' => $date,
                     'name' => $request->name,
                     'attendance' => $time,
@@ -56,30 +59,35 @@ class AtteController extends Controller
                 //dd($item);
             }
         }
-        
-        return view('test');
+
+        return redirect('attendance');
     }
 
     public function timeOut(Request $request)
     {
+        $user = $request->user();
         $times = Carbon::now();
         $time = $times->format('H:i');
         $date = $times->format('Y-m-d');
-        $item = Time::where('user_id', $request->user_id)->where('date', $date)->first();
-        $attendance = Carbon::parse($item['date']."".$item['attendance']);
+        $item = Time::where('user_id', $user['id'])->where('date', $date)->first();
+        $attendance = Carbon::parse($item['date'] . "" . $item['attendance']);
         $work = $times->diffInMinutes($attendance);
-        $actual_workTime = $work-$item['breakTime'];
-        $timeMinutes = floor($actual_workTime / 60);
-        $timeSeconds = floor($actual_workTime % 60);
-        $workTimes = Carbon::parse($timeMinutes.":". $timeSeconds);
-        $workTime=$workTimes->format("H:i");
+        $actual_workTime = $work - $item['breakTime'];
+        $timeMinutes = 0;
+        $timeSeconds = $actual_workTime;
+        if ($actual_workTime > 59) {
+            $timeMinutes = floor($actual_workTime / 60);
+            $timeSeconds = floor($actual_workTime % 60);
+        }
+        $workTimes = Carbon::parse($timeMinutes . ":" . $timeSeconds);
+        $workTime = $workTimes->format("H:i");
         if ($item == null) {
             $form = [
-                'user_id' => $request->user_id,
+                'user_id' => $user['id'],
                 'date' => $date,
                 'name' => $request->name,
                 'leaving' => $time,
-                'workTime'=>$workTime,
+                'workTime' => $workTime,
             ];
             //Time::create($form);
             dd($item);
@@ -87,12 +95,12 @@ class AtteController extends Controller
             if ($date == $item['date']) {
                 $form = [
                     'leaving' => $time,
-                    'workTime'=> $workTime,
+                    'workTime' => $workTime,
                 ];
                 Time::find($item['id'])->update(($form));
             } else {
                 $form = [
-                    'user_id' => $request->user_id,
+                    'user_id' => $user['id'],
                     'date' => $date,
                     'name' => $request->name,
                     'leaving' => $time,
@@ -102,18 +110,20 @@ class AtteController extends Controller
             }
         }
 
-        return view('test');
+        return redirect('attendance');
     }
 
-    public function breakIn(Request $request){
+    public function breakIn(Request $request)
+    {
+        $user = $request->user();
         $times = Carbon::now();
         $time = $times->format('H:i');
         $date = $times->format('Y-m-d');
-        $item = Time::where('user_id', $request->user_id)->where('date', $date)->first();
+        $item = Time::where('user_id', $user['id'])->where('date', $date)->first();
         //dd($item);
         if ($item == null) {
             $form = [
-                'user_id' => $request->user_id,
+                'user_id' => $user['id'],
                 'date' => $date,
                 'name' => $request->name,
                 'breakIn' => $time,
@@ -129,7 +139,7 @@ class AtteController extends Controller
                 //dd($item['id']);
             } else {
                 $form = [
-                    'user_id' => $request->user_id,
+                    'user_id' => $user['id'],
                     'date' => $date,
                     'name' => $request->name,
                     'breakIn' => $time,
@@ -139,58 +149,60 @@ class AtteController extends Controller
             }
         }
 
-        return view('test');
+        return redirect('attendance');
     }
 
-    public function breakOut(Request $request){
+    public function breakOut(Request $request)
+    {
+        $user = $request->user();
         $times = Carbon::now();
         $time = $times->format('H:i');
         $date = $times->format('Y-m-d');
-        $item = Time::where('user_id', $request->user_id)->where('date', $date)->first();
-        $breakIn = Carbon::parse($item['date']."".$item['breakIn']);
+        $item = Time::where('user_id', $user['id'])->where('date', $date)->first();
+        $breakIn = Carbon::parse($item['date'] . "" . $item['breakIn']);
         $breakTimes = $times->diffInMinutes($breakIn);
-        $breakTime = $item['breakTime'] + $breakTimes-1;
+        $breakTime = $item['breakTime'] + $breakTimes;
         $breakMinutes = floor($breakTimes / 60);
         $breakSeconds = floor($breakTimes % 60);
-        $breakOuts = Carbon::parse($breakMinutes.":".$breakSeconds);
-        $breakOut=$breakOuts->format("H:i");
-        if ($item['breakIn']!='00:00:00'){
-        if ($item == null) {
-            $form = [
-                'user_id' => $request->user_id,
-                'date' => $date,
-                'name' => $request->name,
-                'breakIn'=>"",
-                'breakOut' => $breakOut,
-                'breakTime' => $breakTime,
-            ];
-            Time::create($form);
-            //dd($item);
-        } else {
-            if ($date == $item['date']) {
+        $breakOuts = Carbon::parse($breakMinutes . ":" . $breakSeconds);
+        $breakOut = $breakOuts->format("H:i");
+        if ($item['breakIn'] != '00:00:00') {
+            if ($item == null) {
                 $form = [
+                    'user_id' => $user['id'],
+                    'date' => $date,
+                    'name' => $request->name,
                     'breakIn' => "",
                     'breakOut' => $breakOut,
                     'breakTime' => $breakTime,
                 ];
-                Time::find($item['id'])->update(($form));
-            } else {
-                $form = [
-                    'user_id' => $request->user_id,
-                    'date' => $date,
-                    'name' => $request->name,
-                    'breakIn' => "",
-                    'breakOut'=>$breakOut,
-                    'breakTime' => $breakTime,
-                ];
                 Time::create($form);
                 //dd($item);
+            } else {
+                if ($date == $item['date']) {
+                    $form = [
+                        'breakIn' => "",
+                        'breakOut' => $breakOut,
+                        'breakTime' => $breakTime,
+                    ];
+                    Time::find($item['id'])->update(($form));
+                } else {
+                    $form = [
+                        'user_id' => $user['id'],
+                        'date' => $date,
+                        'name' => $request->name,
+                        'breakIn' => "",
+                        'breakOut' => $breakOut,
+                        'breakTime' => $breakTime,
+                    ];
+                    Time::create($form);
+                    //dd($item);
+                }
             }
+
         }
 
-    }
-
-        return view('test');
+        return redirect('attendance');
     }
 
     public function test()
@@ -198,10 +210,34 @@ class AtteController extends Controller
         return view('test');
     }
 
-    public function attendance()
+    public function userList()
     {
-        $times = Time::paginate(5);
+
+        $times = User::simplePaginate(5);
 
         return view('attendance', ['times' => $times]);
+    }
+
+    public function userAttendance(Request $request)
+    {
+
+        $times = Time::where('user_id', $request->user_id);
+
+        dd($times);
+
+        return view('attendance', ['times' => $times]);
+    }
+
+    public function attendance()
+    {
+        $items = Carbon::now();
+        //$item = $items->format('H:i');
+        $date = $items->format('Y-m-d');
+        $times = Time::where('date', $date)->get();
+        //$times = Time::where('date', $date)->get();
+
+        $times = Time::paginate(5);
+
+        return view('attendance', ['times' => $times], ['date' => $date]);
     }
 }

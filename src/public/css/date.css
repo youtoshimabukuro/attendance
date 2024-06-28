@@ -101,7 +101,7 @@ table {
         border-bottom: 0.1vw solid rgb(212, 212, 212);
 }
 
-.register_inner p {
+.links {
         padding-top: 3%;
         font-size: 1.2vw;
         display: flex;

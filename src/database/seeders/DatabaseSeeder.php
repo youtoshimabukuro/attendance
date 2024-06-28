@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Time::factory(7)->create();
+        Time::factory(14)->create();
     }
 }

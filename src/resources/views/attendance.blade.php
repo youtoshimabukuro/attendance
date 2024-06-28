@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
         <link rel="stylesheet" href="{{ asset('css/date.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
         <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
 </head>
 <body>
@@ -36,28 +37,28 @@
                 </header>
                 <div class="main">
                     <div class="register_inner">
-                        <h1></h1>
+                        <h1>{{$date}}</h1>
                         <div class="table_box">
                             <table class="date_table">
                                 <tr class="date_table-item">
-                                    <th>名前</th>
-                                    <th>勤務開始</th>
-                                    <th>勤務終了</th>
-                                    <th>休憩開始</th>
-                                    <th>勤務時間</th>
+                                    <th align="center">名前</th>
+                                    <th align="center">勤務開始</th>
+                                    <th align="center">勤務終了</th>
+                                    <th align="center">休憩時間</th>
+                                    <th align="center">勤務時間</th>
                                 </tr>
                                 @foreach ($times as $time)
                                     <tr>
-                                        <td>{{$time->name}}</td>
-                                        <td>{{$time->attendance}}</td>
-                                        <td>{{$time->leaving}}</td>
-                                        <td>{{$time->breakOut}}</td>
-                                        <td>{{$time->workTime}}</td>
+                                        <td align="center">{{$time->name}}</td>
+                                        <td align="center"> {{$time->attendance}}</td>
+                                        <td align="center">{{$time->leaving}}</td>
+                                        <td align="center">{{$time->breakOut}}</td>
+                                        <td align="center">{{$time->workTime}}</td>
                                     </tr>
                                 @endforeach
                             </table>
                         </div>
-                        {{--<p>{{ $times->appends(request()->query())->links('vendor.pagination.custom') }}</p>--}}
+                        <div class="links">{{ $times->links() }}</div>
                     </div>
                 </div>
                 <footer class="footer">

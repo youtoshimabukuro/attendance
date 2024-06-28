@@ -15,10 +15,14 @@ class TimeFactory extends Factory
     public function definition()
     {
         return [
-            'attendance' => $this->faker->date(),
-            'leaving' => $this->faker->date(),
-            'break' => $this->faker->date(),
-            'workTime' => $this->faker->date()
+            'user_id'=>$this->faker->numberBetween(1,20),
+            'name' => $this->faker->name(),
+            'date' => $this->faker->date(),
+            'attendance' => $this->faker->time('H:i'),
+            'leaving' => $this->faker->time(),
+            'breakIn' => $this->faker->time(),
+            'breakOut' => $this->faker->time(),
+            'workTime' => $this->faker->time()
         ];
     }
 }
