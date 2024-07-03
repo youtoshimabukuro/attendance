@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./css/stamp.css">
-    <link rel="stylesheet" href="./css/sanitize.css">
+    <link rel="stylesheet" href="{{ asset('css/stamp.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
 </head>
 
 <body>
@@ -19,6 +19,9 @@
                 <nav class="header-nav">
                     <ul class="header-nav-list">
                         @if (Auth::check())
+                            <li class="header-nav-item">
+                                <a style="text-decoration: none;" href="/userList">ユーザー</a>
+                            </li>
                             <li class="header-nav-item">
                                 <a style="text-decoration: none;" href="/">ホーム</a>
                             </li>
@@ -43,25 +46,21 @@
                     <div class="stamp_box-top">
                         <form action="/timeIn" method="post">
                             @csrf
-                            <input type="submit" class="stamp_form-btn" name="" value="勤務開始" />
-                            <input type="hidden" name="name" value="{{Auth::user()->name}}" readonly>
+                            <input type="submit" class="stamp_form-btn" name="" {{--style={{$timeIn_color}}--}} value="勤務開始" />
                         </form>
                         <form action="/timeOut" method="post">
                             @csrf
-                            <input type="submit" class="stamp_form-btn" name="" value="勤務終了" />
-                            <input type="hidden" name="name" value="{{Auth::user()->name}}" readonly>
+                            <input type="submit" class="stamp_form-btn" name="" {{--style={{$timeOut_color}}--}} value="勤務終了" />
                         </form>
                     </div>
                     <div class="stamp_box-bottom">
                         <form action="/breakIn" method="post">
                             @csrf
-                            <input type="submit" class="stamp_form-btn" name="" value="休憩開始" />
-                            <input type="hidden" name="name" value="{{Auth::user()->name}}" readonly>
+                            <input type="submit" class="stamp_form-btn" name="" {{--style={{$timeIn_color}}--}} value="休憩開始" />
                         </form>
                         <form action="/breakOut" method="post">
                             @csrf
-                            <input type="submit" class="stamp_form-btn" name="" value="休憩終了" />
-                            <input type="hidden" name="name" value="{{Auth::user()->name}}" readonly>
+                            <input type="submit" class="stamp_form-btn" name="" {{--style={{$timeIn_color}}--}} value="休憩終了" />
                         </form>
                     </div>
                 </div>

@@ -39,7 +39,7 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         Fortify::verifyEmailView(function () {
-            return view('verified.verify-email');
+            return view('auth.verify-email');
         });
 
         RateLimiter::for('login', function (Request $request) {

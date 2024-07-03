@@ -10,18 +10,56 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use PHPUnit\Framework\MockObject\Stub\ReturnStub;
+use Vtiful\Kernel\Format;
 
 class AtteController extends Controller
 {
-    public function stamp()
+    public function stamp(Request $request)
     {
-        $time = Carbon::now();
-        $format = $time->format('H:i');
-        $dates = [
-            'time' => $format,
-        ];
+        $user = $request->user();
+        $times = Carbon::now();
+        $date = $times->format('Y-m-d');
+        $item = Time::where('user_id', $user['id'])->where('date', $date)->first();
 
-        return view('stamp', ['dates' => $dates]);
+        if ($item!=null) {
+
+            if ($item['attendance']==null) {
+                $timeIn_color = "color:;";
+            } else {
+                $timeIn_color = "color:burlywood;";
+            }
+
+            if ($item['leaving']==null) {
+                $timeOut_color = "color:;";
+            } else {
+                $timeOut_color = "color:burlywood;";
+            }
+
+            if ($item['breakIn']==null) {
+                $breakIn_color = "color:;";
+            } else {
+                $breakIn_color = "color:burlywood;";
+            }
+
+            if ($item['breakOut']==null) {
+                $breakOut_color = "color:;";
+            } else {
+                $breakOut_color = "color:burlywood;";
+            }
+    
+        } else {
+            $timeIn_color = "color:;";
+            $timeOut_color = "color:;";
+            $breakIn_color = "color:;";
+            $breakOut_color = "color:;";
+        }
+
+        return view('stamp',compact('timeIn_color'),compact('timeOut_color'),compact('breakIn_color'));
+    }
+
+    public function dates(Request $request)
+    {
+        $request->name;
     }
 
     public function timeIn(Request $request)
@@ -36,7 +74,7 @@ class AtteController extends Controller
             $form = [
                 'user_id' => $user['id'],
                 'date' => $date,
-                'name' => $request->name,
+                'name' => $user['name'],
                 'attendance' => $time,
             ];
             Time::create($form);
@@ -52,11 +90,10 @@ class AtteController extends Controller
                 $form = [
                     'user_id' => $user['id'],
                     'date' => $date,
-                    'name' => $request->name,
+                    'name' => $user['name'],
                     'attendance' => $time,
                 ];
                 Time::create($form);
-                //dd($item);
             }
         }
 
@@ -85,7 +122,7 @@ class AtteController extends Controller
             $form = [
                 'user_id' => $user['id'],
                 'date' => $date,
-                'name' => $request->name,
+                'name' => $user['name'],
                 'leaving' => $time,
                 'workTime' => $workTime,
             ];
@@ -102,7 +139,7 @@ class AtteController extends Controller
                 $form = [
                     'user_id' => $user['id'],
                     'date' => $date,
-                    'name' => $request->name,
+                    'name' => $user['name'],
                     'leaving' => $time,
                     'workTime' => $workTime,
                 ];
@@ -125,7 +162,7 @@ class AtteController extends Controller
             $form = [
                 'user_id' => $user['id'],
                 'date' => $date,
-                'name' => $request->name,
+                'name' => $user['name'],
                 'breakIn' => $time,
             ];
             Time::create($form);
@@ -141,11 +178,10 @@ class AtteController extends Controller
                 $form = [
                     'user_id' => $user['id'],
                     'date' => $date,
-                    'name' => $request->name,
+                    'name' => $user['name'],
                     'breakIn' => $time,
                 ];
                 Time::create($form);
-                //dd($item);
             }
         }
 
@@ -162,8 +198,12 @@ class AtteController extends Controller
         $breakIn = Carbon::parse($item['date'] . "" . $item['breakIn']);
         $breakTimes = $times->diffInMinutes($breakIn);
         $breakTime = $item['breakTime'] + $breakTimes;
-        $breakMinutes = floor($breakTimes / 60);
-        $breakSeconds = floor($breakTimes % 60);
+        $breakMinutes = 0;
+        $breakSeconds = $breakTime;
+        if ($breakTime > 59) {
+            $breakMinutes = floor($breakTimes / 60);
+            $breakSeconds = floor($breakTimes % 60);
+        }
         $breakOuts = Carbon::parse($breakMinutes . ":" . $breakSeconds);
         $breakOut = $breakOuts->format("H:i");
         if ($item['breakIn'] != '00:00:00') {
@@ -171,7 +211,7 @@ class AtteController extends Controller
                 $form = [
                     'user_id' => $user['id'],
                     'date' => $date,
-                    'name' => $request->name,
+                    'name' => $user['name'],
                     'breakIn' => "",
                     'breakOut' => $breakOut,
                     'breakTime' => $breakTime,
@@ -190,13 +230,12 @@ class AtteController extends Controller
                     $form = [
                         'user_id' => $user['id'],
                         'date' => $date,
-                        'name' => $request->name,
+                        'name' => $user['name'],
                         'breakIn' => "",
                         'breakOut' => $breakOut,
                         'breakTime' => $breakTime,
                     ];
                     Time::create($form);
-                    //dd($item);
                 }
             }
 
@@ -213,30 +252,51 @@ class AtteController extends Controller
     public function userList()
     {
 
-        $times = User::simplePaginate(5);
+        $users = User::paginate(5);
 
-        return view('attendance', ['times' => $times]);
+        return view('user',['users'=>$users]);
+        
     }
 
-    public function userAttendance(Request $request)
+    public function user_attendance(Request $request)
     {
 
-        $times = Time::where('user_id', $request->user_id);
+        $user_id = $request->id;
 
-        dd($times);
+        $user_name = $request->name;
 
-        return view('attendance', ['times' => $times]);
+        $users = Time::where('user_id', $user_id)->paginate(5);
+
+        $users->appends($user_id);
+
+        return view('user_attendance',['times'=>$users],['user_name'=>$user_name]);
+    }
+
+    public function yesterday(Request $request) {
+        $items=$request->date;
+        $date=new Carbon($items);
+        //$item = $items->format('Y-m-d');
+        $date->subDay(1);
+        $times = Time::whereDate('created_at', $date)->paginate(5);
+
+        return view('attendance', ['times' => $times], ['date' => $date]);
+    }
+
+    public function tomorrow(Request $request) {
+        $items = $request->date;
+        $date = new Carbon($items);
+        //$item = $items->format('Y-m-d');
+        $date->addDay(1);
+        $times = Time::whereDate('created_at', $date)->paginate(5);
+
+        return view('attendance', ['times' => $times], ['date' => $date]);
     }
 
     public function attendance()
     {
         $items = Carbon::now();
-        //$item = $items->format('H:i');
         $date = $items->format('Y-m-d');
-        $times = Time::where('date', $date)->get();
-        //$times = Time::where('date', $date)->get();
-
-        $times = Time::paginate(5);
+        $times = Time::whereDate('created_at', $date)->paginate(5);
 
         return view('attendance', ['times' => $times], ['date' => $date]);
     }

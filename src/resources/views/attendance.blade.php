@@ -19,16 +19,19 @@
                             <ul class="header-nav-list">
                                 @if (Auth::check())
                                 <li class="header-nav-item">
-                                        <a style="text-decoration: none;" href="/">ホーム</a>
+                                    <a style="text-decoration: none;" href="/userList">ユーザー</a>
                                 </li>
                                 <li class="header-nav-item">
-                                        <a style="text-decoration: none;" href="/attendance">日付一覧</a>
+                                    <a style="text-decoration: none;" href="/">ホーム</a>
                                 </li>
                                 <li class="header-nav-item">
-                                        <form action="/logout" method="post">
-                                                @csrf
-                                                <button class="header-nav-btn">ログアウト</button>
-                                        </form>
+                                    <a style="text-decoration: none;" href="/attendance">日付一覧</a>
+                                </li>
+                                <li class="header-nav-item">
+                                    <form action="/logout" method="post">
+                                    @csrf
+                                        <button class="header-nav-btn">ログアウト</button>
+                                    </form>
                                 </li>
                                 @endif
                             </ul>
@@ -36,24 +39,31 @@
                     </div>
                 </header>
                 <div class="main">
-                    <div class="register_inner">
-                        <h1>{{$date}}</h1>
+                    <div class="attendance_inner">
+                        <h1>
+                            <form action="/date">
+                                @csrf
+                                <input type="submit" class="date_ttl-btn" name="yesterday" formaction="/yesterday" value="<">
+                                <input type="text" class="date" name="date" value="{{$date}}" readonly>
+                                <input type="submit" class="date_ttl-btn" formaction="/tomorrow" name="tomorrow" value=">">
+                            </form>
+                        </h1>
                         <div class="table_box">
                             <table class="date_table">
                                 <tr class="date_table-item">
-                                    <th align="center">名前</th>
-                                    <th align="center">勤務開始</th>
-                                    <th align="center">勤務終了</th>
-                                    <th align="center">休憩時間</th>
-                                    <th align="center">勤務時間</th>
+                                    <th>名前</th>
+                                    <th>勤務開始</th>
+                                    <th>勤務終了</th>
+                                    <th>休憩時間</th>
+                                    <th>勤務時間</th>
                                 </tr>
                                 @foreach ($times as $time)
                                     <tr>
-                                        <td align="center">{{$time->name}}</td>
-                                        <td align="center"> {{$time->attendance}}</td>
-                                        <td align="center">{{$time->leaving}}</td>
-                                        <td align="center">{{$time->breakOut}}</td>
-                                        <td align="center">{{$time->workTime}}</td>
+                                        <td>{{$time->name}}</td>
+                                        <td> {{$time->attendance}}</td>
+                                        <td>{{$time->leaving}}</td>
+                                        <td>{{$time->breakOut}}</td>
+                                        <td>{{$time->workTime}}</td>
                                     </tr>
                                 @endforeach
                             </table>

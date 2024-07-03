@@ -36,7 +36,7 @@ body {
 }
 
 .header-nav {
-        width: 27%;
+        width: 33%;
         height: 100%;
 }
 
@@ -70,18 +70,50 @@ body {
         background-color: aliceblue;
 }
 
-.register_inner {
+.attendance_inner {
         width: 87%;
         height: 100%;
         margin: 0 auto;
 }
 
-.register_inner h1 {
+.attendance_inner h1 {
         font-size: 1.7vw;
         display: flex;
         align-items: center;
         justify-content: center;
         height: 20%;
+        padding: 5%;
+}
+
+.attendance_inner form {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+}
+
+.date {
+        font-size: 1.6vw;
+        width: 11%;
+        border: none;
+        outline: none;
+        text-align: center;
+        background-color: aliceblue;
+}
+
+.date_ttl-btn {
+        font-size: 1.6vw;
+        margin: 2%;
+        width: 3%;
+        border-color: rgb(33, 75, 224);
+        border-width: 1px;
+        color: rgb(33, 65, 184);
+        background-color: white;
+}
+
+.date_ttl-btn:active {
+        background: rgb(33, 75, 224);
+        color: #FFF;
 }
 
 .table_box {
@@ -91,12 +123,14 @@ body {
 
 table {
         width: 100%;
+        table-layout: fixed;
 }
 
 .date_table th,
 .date_table td {
         font-size: 1.2vw;
         padding: 2%;
+        text-align: center;
         border-top: 0.1vw solid rgb(212, 212, 212);
         border-bottom: 0.1vw solid rgb(212, 212, 212);
 }
